@@ -10,48 +10,62 @@ public class PaintModel extends Observable {
 	private ArrayList<Rectangle> rectangle = new ArrayList<Rectangle>();
 	private ArrayList<Square> square = new ArrayList<Square>();
 	private ArrayList<Line> line = new ArrayList<Line>();
-	private ArrayList<Earser> earser = new ArrayList<Earser>();
+	private ArrayList<Point> earsePoints = new ArrayList<Point>();
 	private ArrayList<Pencil> pencil = new ArrayList<Pencil>();
+	private String event;
 	
 	public void addPoint(Point p){
 		this.points.add(p);
+		this.event = "POINT";
+		
 		this.setChanged();
 		this.notifyObservers();
 	}
+	
 	public ArrayList<Point> getPoints(){
 		return points;
 	}
 	
 	public void addCircle(Circle c){
 		this.circles.add(c);
+		this.event = "CIRCLE";
 		
 		this.setChanged();
 		this.notifyObservers();
 	}
+	
 	public ArrayList<Circle> getCircles(){
 		return circles;
 	}
 	
 	public void addRectangle(Rectangle r) {
 		this.rectangle.add(r);
+		this.event = "RECT";
+		
 		this.setChanged();
 		this.notifyObservers();
 	}
+	
 	public ArrayList<Rectangle> getRectangle(){
 		return rectangle;
 	}
 	
 	public void addSquare(Square s) {
 		this.square.add(s);
+		this.event = "SQUARE";
+		
 		this.setChanged();
 		this.notifyObservers();
 	}
+	
 	public ArrayList<Square> getSquare(){
 		return square;
 	}
 	
- void addLine(Line line) {
+	void addLine(Line line) {
 		this.line.add(line);
+		this.event = "LINE";
+		
 		this.setChanged();
 		this.notifyObservers();
 	}
@@ -60,23 +74,31 @@ public class PaintModel extends Observable {
 		return line;
 	}
 	
-	public void addEarser(Earser earser) {
-		this.earser.add(earser);
+	public void addEarsePoint(Point point) {
+		this.earsePoints.add(point);
+		this.event = "ERASE";
+		
 		this.setChanged();
 		this.notifyObservers();
 	}
-	public ArrayList<Earser> getEarser(){
-		return earser;
+	
+	public ArrayList<Point> getEarser(){
+		return this.earsePoints;
 	}
 	
 	public void addPencil(Pencil pencil) {
 		this.pencil.add(pencil);
+		this.event = "PENCIL";
+		
 		this.setChanged();
 		this.notifyObservers();
 	}
+	
 	public ArrayList<Pencil> getPencil(){
 		return pencil;
 	}
 	
-	
+	public String getEvent() {
+		return this.event;
+	}
 }

@@ -6,14 +6,15 @@ import java.awt.Graphics2D;
 public class Earser {
 
 	public Graphics2D g2d;
-	public Point point;
+	public Color color;
 	
-	public Earser(Point p, Graphics2D g) {
+	public Earser(Graphics2D g, Color color) {
 		this.g2d = g;
-		this.point = p;
+		this.color = color;
 	}
 	
 	public void erase(Point p) {
+		this.g2d.setColor(this.color);
 		this.g2d.clearRect(p.x, p.y, 20, 30);
 	}
 }

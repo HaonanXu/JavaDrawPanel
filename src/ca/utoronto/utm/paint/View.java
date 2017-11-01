@@ -14,8 +14,6 @@ public class View extends JFrame implements ActionListener {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private PaintModel model;
-	
 	// The components that make this up
 	private PaintPanel paintPanel;
 	private ShapeChooserPanel shapeChooserPanel;
@@ -36,7 +34,6 @@ public class View extends JFrame implements ActionListener {
 		c.add(this.shapeChooserPanel,BorderLayout.WEST);
 		c.add(this.colorChooserPanel,BorderLayout.SOUTH);
 		
-		this.model=model;
 		
 		this.paintPanel = new PaintPanel(model, this);
 		c.add(this.paintPanel, BorderLayout.CENTER);
