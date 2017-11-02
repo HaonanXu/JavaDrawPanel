@@ -3,18 +3,15 @@ package ca.utoronto.utm.paint;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class Earser {
+public class Earser extends Shape {
 
-	public Graphics2D g2d;
-	public Color color;
-	
-	public Earser(Graphics2D g, Color color) {
-		this.g2d = g;
-		this.color = color;
+
+	public Earser(Point start, Color color, String style) {
+		super(start, color, style);
 	}
 	
-	public void erase(Point p) {
-		this.g2d.setColor(this.color);
-		this.g2d.clearRect(p.x, p.y, 20, 30);
+	public void draw(Graphics2D g2d) {
+		g2d.setColor(this.getColor());
+		g2d.clearRect(this.getStart().getX(), this.getStart().getY(), 20, 30);
 	}
 }

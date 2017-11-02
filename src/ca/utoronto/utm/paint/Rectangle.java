@@ -1,6 +1,7 @@
 package ca.utoronto.utm.paint;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 
 /**
  * 
@@ -32,5 +33,11 @@ public class Rectangle extends Shape{
 
 	public void setHeight(int height) {
 		this.height = height;
+	}
+	
+	public void draw(Graphics2D g2d) {
+		g2d.setColor(this.getColor());
+		if (this.getStyle() == "fill") g2d.fillRect(this.getStart().getX(), this.getStart().getY(), this.width, this.height);
+		if (this.getStyle() == "outline") g2d.drawRect(this.getStart().getX(), this.getStart().getY(), this.width, this.height);
 	}
 }

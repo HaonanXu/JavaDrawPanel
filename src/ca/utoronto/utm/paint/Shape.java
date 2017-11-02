@@ -1,19 +1,21 @@
 package ca.utoronto.utm.paint;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 
 public class Shape {
 	private Color color;
 	private Point start;
 	private String style;
-	public Shape(Point start, Color color, String sty) {
+	
+	public Shape(Point start, Color color, String style) {
 		this.color = color;
 		this.start = start;
-		this.style = sty;
+		this.style = style;
 	}
 
 	public Color getColor() {
-		return color;
+		return this.color;
 	}
 
 	public void setColor(Color color) {
@@ -25,12 +27,12 @@ public class Shape {
 	}
 
 	public Point getStart() {
-		return start;
+		return this.start;
 	}
 
 	public void setStart(Point start) {
 		this.start = start;
 	}
 	
-	
+	public void draw(Graphics2D g2d) {}
 }

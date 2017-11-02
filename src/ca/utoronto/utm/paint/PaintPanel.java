@@ -27,12 +27,7 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 	private Rectangle rectangle; 
 	private Square square;
 	private Line line; 
-	private Pencil pencil;
 	private String style; // outline style or fill in style.
-	private String repaintFlag;
-    private BufferedImage grid;
-    private Graphics2D gc;
-    private Graphics2D g2;
 	
 	public PaintPanel(PaintModel model, View view){
 		this.setBackground(Color.WHITE);
@@ -41,15 +36,12 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 		this.addMouseMotionListener(this);
 
 		this.style = "outline";
-		
-		this.repaintFlag = "";
+
 		this.mode="";
 		this.model = model;
 		this.model.addObserver(this);
 		this.view=view;
-		this.grid = null;
-		this.gc = null;
-		this.g2 = null;
+		this.color = Color.BLACK;
 	}
 
 	/**
@@ -60,84 +52,23 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 		// the javadoc to see more of what this can do for you!!
 		
         super.paintComponent(g); //paint background
-        this.g2 = (Graphics2D) g; // lets use the advanced api
+        Graphics2D g2d = (Graphics2D) g; // lets use the advanced api
 		// Origin is at the top left of the window 50 over, 75 down
-
-        if (this.grid == null)
-        {
-            int w = this.getWidth();
-            int h = this.getHeight();
-            this.grid = (BufferedImage) (this.createImage(w, h));
-            this.gc = this.grid.createGraphics();
-        }
         
-		this.g2.drawString ("i="+i, 50, 75);
+        g2d.drawString ("i="+i, 50, 75);
 		i=i+1;
 
-        this.g2.drawImage(this.grid, null, 0, 0);
+		this.draw(g2d);
+		
+		g2d.dispose();
 	}
 	
-	public void draw() {
-		switch (this.repaintFlag) {
-			case "POINT":
-				ArrayList<Point> points = this.model.getPoints();
-				for(int i=0;i<points.size()-1; i++){
-					Point p1=points.get(i);
-					Point p2=points.get(i+1);
-					this.gc.drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
-				}
-				
-				break;
-			case "CIRCLE":
-				Circle circle = this.model.getCircle();
-
-				this.gc.setColor(circle.getColor());
-				if (circle.getStyle() == "fill") this.gc.fillOval(circle.getStart().getX(), circle.getStart().getY(), circle.getRadius(), circle.getRadius());
-				if (circle.getStyle() == "outline") this.gc.drawOval(circle.getStart().getX(), circle.getStart().getY(), circle.getRadius(), circle.getRadius());
-				
-				break;
-			case "RECT":
-				Rectangle rect = this.model.getRectangle();
-
-				this.gc.setColor(rect.getColor());
-				if (rect.getStyle() == "fill") this.gc.fillRect(rect.getStart().getX(), rect.getStart().getY(), rect.getWidth(), rect.getHeight());
-				if (rect.getStyle() == "outline") this.gc.drawRect(rect.getStart().getX(), rect.getStart().getY(), rect.getWidth(), rect.getHeight());
-				
-				break;
-			case "SQUARE":
-				Square square = this.model.getSquare();
-				
-				this.gc.setColor(square.getColor());
-				if (square.getStyle() == "fill") this.gc.fillRect(square.getStart().getX(), square.getStart().getY(), square.getLength(), square.getLength());
-				if (square.getStyle() == "outline") this.gc.drawRect(square.getStart().getX(), square.getStart().getY(), square.getLength(), square.getLength());
-
-				break;
-			case "LINE":
-				Line line = this.model.getLine();
-				
-				this.gc.setColor(line.getColor());
-				this.gc.drawLine(line.getStart().getX(), line.getStart().getY(), line.getEnd().getX(), line.getEnd().getY());
-				
-				break;
-			case "ERASE":
-				Point point = this.model.getEarser();
-				
-				Color cl = this.gc.getColor();
-				this.gc.setColor(this.getBackground());
-				this.gc.clearRect(point.x, point.y, 20, 20);
-				this.gc.setColor(cl);
-				
-				break;
-			case "PENCIL":
-				Pencil pencil = this.model.getPencil();
-
-				this.gc.setColor(pencil.getColor());
-				this.gc.drawLine(pencil.getStart().getX(), pencil.getStart().getY(), pencil.getEnd().getX(), pencil.getEnd().getY());
-				
-				break;
-		}
+	public void draw(Graphics2D g2d) {
+		ArrayList<Shape> shapes = this.model.getShape();
 		
-		this.repaint();
+		for (Shape s : shapes) {
+			s.draw(g2d);
+		}
 	}
 	
 	public void setdrawColor(Color string) {
@@ -150,10 +81,7 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 	}
 	
 	public void update(Observable o, Object arg) {
-		// Not exactly how MVC works, but similar.
-		PaintModel changedModel = (PaintModel) o;
-		this.repaintFlag = changedModel.getEvent();
-		this.draw(); // Schedule a call to paintComponent
+		if (o instanceof PaintModel) this.repaint();
 	}
 	
 	/**
@@ -164,58 +92,82 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 	}
 
 	public void mouseDragged(MouseEvent e) {
-		if(this.mode=="Squiggle"){
-			this.model.addPoint(new Point(e.getX(), e.getY()));
-		} else if(this.mode=="Circle"){
+		Point point = new Point(e.getX(),e.getY());
+		
+		switch (this.mode) {
+		case "Squiggle":
+			this.model.addShape(new Line(point, this.color, point));
+			
+			break;
+		case "Circle":
 			int radius = Math.abs(this.circle.getStart().getX()-e.getX());
 			this.circle.setRadius(radius);
-			this.model.addCircle(this.circle);
-		} else if(this.mode == "Rectangle") {
+			this.model.addShape(this.circle);
+			
+			break;
+		case "Rectangle":
 			int width = Math.abs(this.rectangle.getStart().getX()-e.getX());
 			int height = Math.abs(this.rectangle.getStart().getY()-e.getY());
 			this.rectangle.setHeight(height);
 			this.rectangle.setWidth(width);
-			this.model.addRectangle(this.rectangle);
+			this.model.addShape(this.rectangle);
 			
-		} else if(this.mode == "Square") {
+			break;
+		case "Square":
 			int length = Math.abs(this.square.getStart().getX()-e.getX());
 			this.square.setLength(length);
-			this.model.addSquare(this.square);
-		} else if(this.mode == "Line") {
+			this.model.addShape(this.square);
+			
+			break;
+		case "Line":
 			Point end = new Point(e.getX(), e.getY());
 			this.line.setEnd(end);
-			this.model.addLine(line);
-		} else if(this.mode == "Eraser") {
-			this.model.addEarsePoint(new Point(e.getX(),e.getY()));	
-		} else if(this.mode == "Pencil") {
-			Point start = new Point(e.getX(),e.getY());
-			this.pencil.setStart(start);
-			this.pencil = new Pencil(start, this.color, start);
-			this.model.addPencil(this.pencil);
+			this.model.addShape(line);
+			
+			break;
+		case "Eraser":
+			this.model.addShape(new Earser(point, this.getBackground(), null));
+			
+			break;
+		case "Pencil":
+			this.model.addShape(new Pencil(point, this.color, point));
+			
+			break;
 		}
 	}
 	
 	public void mousePressed(MouseEvent e) {
-		if(this.mode=="Squiggle"){
-			
-		} else if(this.mode=="Circle"){
-			// Problematic notion of radius and centre!!
-			Point centre = new Point(e.getX(), e.getY());
-			this.circle=new Circle(centre, 0, this.color,this.style);
-		} else if(this.mode=="Rectangle") {
-			Point start1 = new Point(e.getX(),e.getY());
-			this.rectangle = new Rectangle(start1,this.color,0, 0,this.style);
-		} else if(this.mode == "Square") {
-			Point start2 = new Point(e.getX(),e.getY());
-			this.square = new Square(start2,this.color,0,this.style);
-		} else if(this.mode == "Line") {
-			Point start3 = new Point(e.getX(),e.getY());
-			this.line = new Line(start3,this.color,start3);
-		} else if(this.mode == "Eraser") {
-			this.model.addEarsePoint(new Point(e.getX(),e.getY()));
-		}else if(this.mode=="Pencil"){
-			Point start = new Point(e.getX(), e.getY());
-			this.pencil=new Pencil(start, this.color, start);
+		Point point = new Point(e.getX(),e.getY());
+
+		switch (this.mode) {
+			case "Squiggle":
+				this.model.addShape(new Line(point, this.color, point));
+				
+				break;
+			case "Circle":
+				this.circle=new Circle(point, 0, this.color,this.style);
+				
+				break;
+			case "Rectangle":
+				this.rectangle = new Rectangle(point, this.color, 0, 0, this.style);
+				
+				break;
+			case "Square":
+				this.square = new Square(point, this.color, 0, this.style);
+				
+				break;
+			case "Line":
+				this.line = new Line(point, this.color, point);
+				
+				break;
+			case "Eraser":
+				this.model.addShape(new Earser(point, this.getBackground(), null));
+				
+				break;
+			case "Pencil":
+				this.model.addShape(new Pencil(point, this.color, point));
+				
+				break;
 		}
 	}
 	
