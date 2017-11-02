@@ -124,15 +124,15 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 			
 			break;
 		case "Rectangle":
-			int width = Math.abs(this.rectangle.getStart().getX()-e.getX());
-			int height = Math.abs(this.rectangle.getStart().getY()-e.getY());
+			int width = Math.abs(this.rectangle.getStart().getX() - e.getX());
+			int height = Math.abs(this.rectangle.getStart().getY() - e.getY());
 			this.rectangle.setHeight(height);
 			this.rectangle.setWidth(width);
 			this.model.addShape(this.rectangle);
 			
 			break;
 		case "Square":
-			int length = Math.abs(this.square.getStart().getX()-e.getX());
+			int length = Math.abs(this.square.getStart().getX() - e.getX());
 			this.square.setLength(length);
 			this.model.addShape(this.square);
 			
