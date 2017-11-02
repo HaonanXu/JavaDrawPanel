@@ -113,45 +113,42 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 		Point point = new Point(e.getX(),e.getY());
 		
 		switch (this.mode) {
-		case "Squiggle":
-			this.model.addShape(new Line(point, this.color, point));
-			
-			break;
-		case "Circle":
-			int radius = Math.abs(this.circle.getStart().getX()-e.getX());
-			this.circle.setRadius(radius);
-			this.model.addShape(this.circle);
-			
-			break;
-		case "Rectangle":
-			int width = Math.abs(this.rectangle.getStart().getX()-e.getX());
-			int height = Math.abs(this.rectangle.getStart().getY()-e.getY());
-			this.rectangle.setHeight(height);
-			this.rectangle.setWidth(width);
-			this.model.addShape(this.rectangle);
-			
-			break;
-		case "Square":
-			int length = Math.abs(this.square.getStart().getX()-e.getX());
-			this.square.setLength(length);
-			this.model.addShape(this.square);
-			
-			break;
-		case "Line":
-			this.line.setEnd(point);
-			this.model.addShape(line);
-			
-			break;
-		case "Eraser":
-			this.model.addShape(new Earser(point, this.getBackground(), null));
-			
-			break;
-		case "Pencil":
-			this.pencil.setEnd(point);
-			this.model.addShape(this.pencil);
-			this.pencil = new Pencil(point, this.color, point);
-			break;
-		}
+			case "Circle":
+				int radius = Math.abs(this.circle.getStart().getX()-e.getX());
+				this.circle.setRadius(radius);
+				this.model.addShape(this.circle);
+				
+				break;
+			case "Rectangle":
+				int width = Math.abs(this.rectangle.getStart().getX()-e.getX());
+				int height = Math.abs(this.rectangle.getStart().getY()-e.getY());
+				this.rectangle.setHeight(height);
+				this.rectangle.setWidth(width);
+				this.model.addShape(this.rectangle);
+				
+				break;
+			case "Square":
+				int length = Math.abs(this.square.getStart().getX()-e.getX());
+				this.square.setLength(length);
+				this.model.addShape(this.square);
+				
+				break;
+			case "Line":
+				this.line.setEnd(point);
+				this.model.addShape(line);
+				
+				break;
+			case "Eraser":
+				this.model.addShape(new Earser(point, this.getBackground(), null));
+				
+				break;
+			case "Squiggle":
+			case "Pencil":
+				this.pencil.setEnd(point);
+				this.model.addShape(this.pencil);
+				this.pencil = new Pencil(point, this.color, point);
+				break;
+			}
 	}
 	
 	@Override
@@ -159,10 +156,6 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 		Point point = new Point(e.getX(),e.getY());
 
 		switch (this.mode) {
-			case "Squiggle":
-				this.line = new Line(point, this.color, point);
-				
-				break;
 			case "Circle":
 				this.circle=new Circle(point, 0, this.color,this.style);
 				
@@ -183,6 +176,7 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 				this.model.addShape(new Earser(point, this.getBackground(), null));
 				
 				break;
+			case "Squiggle":
 			case "Pencil":
 				this.pencil = new Pencil(point, this.color, point);
 				
