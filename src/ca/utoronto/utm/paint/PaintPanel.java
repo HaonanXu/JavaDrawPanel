@@ -20,13 +20,14 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 	private PaintModel model; // slight departure from MVC, because of the way painting works
 	private View view; // So we can talk to our parent or other components of the view
 	
-	// Draw panel function tools
+	// Draw panel functional settings
 	private Color color;
 	private String mode; // modifies how we interpret input (could be better?
 	private Circle circle; 
 	private Rectangle rectangle; 
 	private Square square;
 	private Line line; 
+	private Pencil pencil;
 	private String style; // outline style or fill in style.
 	
 	public PaintPanel(PaintModel model, View view){
@@ -36,11 +37,10 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 		this.addMouseMotionListener(this);
 
 		this.style = "outline";
-
-		this.mode="";
+		this.mode = "";
 		this.model = model;
 		this.model.addObserver(this);
-		this.view=view;
+		this.view = view;
 		this.color = Color.BLACK;
 	}
 
@@ -53,8 +53,8 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 		
         super.paintComponent(g); //paint background
         Graphics2D g2d = (Graphics2D) g; // lets use the advanced api
-		// Origin is at the top left of the window 50 over, 75 down
         
+		// Origin is at the top left of the window 50 over, 75 down        
         g2d.drawString ("i="+i, 50, 75);
 		i=i+1;
 
@@ -63,34 +63,52 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 		g2d.dispose();
 	}
 	
+	/**
+	 * Loop shape list and call draw function for each one.
+	 * 
+	 * @param g2d
+	 */
 	public void draw(Graphics2D g2d) {
 		ArrayList<Shape> shapes = this.model.getShape();
 		
-		for (Shape s : shapes) {
-			s.draw(g2d);
+		for (Shape shape : shapes) {
+			shape.draw(g2d);
 		}
 	}
 	
-	public void setdrawColor(Color string) {
-		this.color = string;
-	}
-	
-	public void setstyle(String sty) {
-		if (sty == "outline") {this.style = "outline";}
-		if (sty == "fill") {this.style = "fill";}
-	}
-	
-	public void update(Observable o, Object arg) {
-		if (o instanceof PaintModel) this.repaint();
-	}
-	
 	/**
-	 *  Controller aspect of this
+	 * set what button user clicked
+	 * 
+	 * @param mode
 	 */
 	public void setMode(String mode){
 		this.mode = mode;
 	}
 
+	/**
+	 * Set the color user selected
+	 * 
+	 * @param string
+	 */
+	public void setdrawColor(Color string) {
+		this.color = string;
+	}
+	
+	/**
+	 * Set the style the user selected
+	 * 
+	 * @param style
+	 */
+	public void setstyle(String style) {
+		this.style = style;
+	}
+	
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof PaintModel) this.repaint();
+	}
+	
+	@Override
 	public void mouseDragged(MouseEvent e) {
 		Point point = new Point(e.getX(),e.getY());
 		
@@ -120,8 +138,7 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 			
 			break;
 		case "Line":
-			Point end = new Point(e.getX(), e.getY());
-			this.line.setEnd(end);
+			this.line.setEnd(point);
 			this.model.addShape(line);
 			
 			break;
@@ -130,18 +147,20 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 			
 			break;
 		case "Pencil":
-			this.model.addShape(new Pencil(point, this.color, point));
-			
+			this.pencil.setEnd(point);
+			this.model.addShape(this.pencil);
+			this.pencil = new Pencil(point, this.color, point);
 			break;
 		}
 	}
 	
+	@Override
 	public void mousePressed(MouseEvent e) {
 		Point point = new Point(e.getX(),e.getY());
 
 		switch (this.mode) {
 			case "Squiggle":
-				this.model.addShape(new Line(point, this.color, point));
+				this.line = new Line(point, this.color, point);
 				
 				break;
 			case "Circle":
@@ -165,24 +184,29 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 				
 				break;
 			case "Pencil":
-				this.model.addShape(new Pencil(point, this.color, point));
+				this.pencil = new Pencil(point, this.color, point);
 				
 				break;
 		}
 	}
 	
+	@Override
 	public void mouseMoved(MouseEvent e) {
 	}
 	
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 }

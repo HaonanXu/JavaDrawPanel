@@ -1,7 +1,7 @@
 package ca.utoronto.utm.paint;
 
 public class Point {
-	int x, y;
+	private int x, y;
 	
 	Point(int x, int y){
 		this.x=x; this.y=y;
