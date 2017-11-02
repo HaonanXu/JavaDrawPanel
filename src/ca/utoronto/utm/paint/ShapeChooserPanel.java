@@ -21,7 +21,7 @@ class ShapeChooserPanel extends JPanel implements ActionListener {
 				button.setIcon(new ImageIcon(getClass().getResource(label+".png")));
 				this.add(button);
 				button.addActionListener(this);
-			
+				button.setToolTipText("Click and then Press and Grag on right panel to pain.");
 		}
 	}
 	
