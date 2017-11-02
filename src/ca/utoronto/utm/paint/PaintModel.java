@@ -6,12 +6,12 @@ import java.util.Observable;
 
 public class PaintModel extends Observable {
 	private ArrayList<Point> points=new ArrayList<Point>();
-	private ArrayList<Circle> circles=new ArrayList<Circle>();
-	private ArrayList<Rectangle> rectangle = new ArrayList<Rectangle>();
-	private ArrayList<Square> square = new ArrayList<Square>();
-	private ArrayList<Line> line = new ArrayList<Line>();
-	private ArrayList<Point> earsePoints = new ArrayList<Point>();
-	private ArrayList<Pencil> pencil = new ArrayList<Pencil>();
+	private Circle circle = null;
+	private Rectangle rectangle = null;
+	private Square square = null;
+	private Line line = null;
+	private Point earsePoint = null;
+	private Pencil pencil = null;
 	private String event;
 	
 	public void addPoint(Point p){
@@ -27,75 +27,75 @@ public class PaintModel extends Observable {
 	}
 	
 	public void addCircle(Circle c){
-		this.circles.add(c);
+		this.circle = c;
 		this.event = "CIRCLE";
 		
 		this.setChanged();
 		this.notifyObservers();
 	}
 	
-	public ArrayList<Circle> getCircles(){
-		return circles;
+	public Circle getCircle(){
+		return this.circle;
 	}
 	
 	public void addRectangle(Rectangle r) {
-		this.rectangle.add(r);
+		this.rectangle = r;
 		this.event = "RECT";
 		
 		this.setChanged();
 		this.notifyObservers();
 	}
 	
-	public ArrayList<Rectangle> getRectangle(){
-		return rectangle;
+	public Rectangle getRectangle(){
+		return this.rectangle;
 	}
 	
 	public void addSquare(Square s) {
-		this.square.add(s);
+		this.square = s;
 		this.event = "SQUARE";
 		
 		this.setChanged();
 		this.notifyObservers();
 	}
 	
-	public ArrayList<Square> getSquare(){
-		return square;
+	public Square getSquare(){
+		return this.square;
 	}
 	
-	void addLine(Line line) {
-		this.line.add(line);
+	void addLine(Line l) {
+		this.line = l;
 		this.event = "LINE";
 		
 		this.setChanged();
 		this.notifyObservers();
 	}
 	
-	public ArrayList<Line> getLine(){
-		return line;
+	public Line getLine(){
+		return this.line;
 	}
 	
 	public void addEarsePoint(Point point) {
-		this.earsePoints.add(point);
+		this.earsePoint = point;
 		this.event = "ERASE";
 		
 		this.setChanged();
 		this.notifyObservers();
 	}
 	
-	public ArrayList<Point> getEarser(){
-		return this.earsePoints;
+	public Point getEarser(){
+		return this.earsePoint;
 	}
 	
 	public void addPencil(Pencil pencil) {
-		this.pencil.add(pencil);
+		this.pencil = pencil;
 		this.event = "PENCIL";
 		
 		this.setChanged();
 		this.notifyObservers();
 	}
 	
-	public ArrayList<Pencil> getPencil(){
-		return pencil;
+	public Pencil getPencil(){
+		return this.pencil;
 	}
 	
 	public String getEvent() {

@@ -80,7 +80,6 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 	public void draw() {
 		switch (this.repaintFlag) {
 			case "POINT":
-				// Draw Lines
 				ArrayList<Point> points = this.model.getPoints();
 				for(int i=0;i<points.size()-1; i++){
 					Point p1=points.get(i);
@@ -90,80 +89,50 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 				
 				break;
 			case "CIRCLE":
-				// Draw Circles
-				ArrayList<Circle> circles = this.model.getCircles();
+				Circle circle = this.model.getCircle();
 
-				for(Circle c: circles){
-					int x = c.getStart().getX();
-					int y = c.getStart().getY();
-					int radius = c.getRadius();
-					this.gc.setColor(c.getColor());
-					if (c.getStyle() == "fill") {this.gc.fillOval(x, y, radius, radius);}
-					if (c.getStyle() == "outline") {this.gc.drawOval(x, y, radius, radius);}	
-				}
-			
+				this.gc.setColor(circle.getColor());
+				if (circle.getStyle() == "fill") this.gc.fillOval(circle.getStart().getX(), circle.getStart().getY(), circle.getRadius(), circle.getRadius());
+				if (circle.getStyle() == "outline") this.gc.drawOval(circle.getStart().getX(), circle.getStart().getY(), circle.getRadius(), circle.getRadius());
+				
 				break;
 			case "RECT":
-				//Draw Rectangle
-				ArrayList<Rectangle> rectangle = this.model.getRectangle();
-				for(Rectangle r: rectangle) {
-					int x = r.getStart().getX();
-					int y = r.getStart().getY();
-					int height = r.getHeight();
-					int width = r.getWidth();
-					this.gc.setColor(r.getColor());
-					if (r.getStyle() == "fill") {this.gc.fillRect(x, y, width, height);}
-					if (r.getStyle() == "outline") {this.gc.drawRect(x, y, width, height);}	
-				}
+				Rectangle rect = this.model.getRectangle();
+
+				this.gc.setColor(rect.getColor());
+				if (rect.getStyle() == "fill") this.gc.fillRect(rect.getStart().getX(), rect.getStart().getY(), rect.getWidth(), rect.getHeight());
+				if (rect.getStyle() == "outline") this.gc.drawRect(rect.getStart().getX(), rect.getStart().getY(), rect.getWidth(), rect.getHeight());
 				
 				break;
 			case "SQUARE":
-				//Draw Square
-				ArrayList<Square> square = this.model.getSquare();
-				for(Square s:square) {
-					int x = s.getStart().getX();
-					int y = s.getStart().getY();
-					int length = s.getLength();
-					this.gc.setColor(s.getColor());
-					if (s.getStyle() == "fill") {this.gc.fillRect(x, y, length, length);}
-					if (s.getStyle() == "outline") {this.gc.drawRect(x, y, length, length);}	
-				}
+				Square square = this.model.getSquare();
 				
+				this.gc.setColor(square.getColor());
+				if (square.getStyle() == "fill") this.gc.fillRect(square.getStart().getX(), square.getStart().getY(), square.getLength(), square.getLength());
+				if (square.getStyle() == "outline") this.gc.drawRect(square.getStart().getX(), square.getStart().getY(), square.getLength(), square.getLength());
+
 				break;
 			case "LINE":
-				//Draw StraightLine
-				ArrayList<Line> line = this.model.getLine();
-				for(Line l: line) {
-					int x = l.getStart().getX();
-					int y = l.getStart().getY();
-					int x1 = l.getEnd().getX();
-					int y1 = l.getEnd().getY();
-					this.gc.setColor(l.getColor());
-					this.gc.drawLine(x, y, x1, y1);
-				}
+				Line line = this.model.getLine();
+				
+				this.gc.setColor(line.getColor());
+				this.gc.drawLine(line.getStart().getX(), line.getStart().getY(), line.getEnd().getX(), line.getEnd().getY());
 				
 				break;
 			case "ERASE":
-				ArrayList<Point> erasePoint = this.model.getEarser();
+				Point point = this.model.getEarser();
+				
 				Color cl = this.gc.getColor();
 				this.gc.setColor(this.getBackground());
-				for (Point p : erasePoint) {
-					this.gc.clearRect(p.x, p.y, 20, 20);
-				}
+				this.gc.clearRect(point.x, point.y, 20, 20);
 				this.gc.setColor(cl);
 				
 				break;
 			case "PENCIL":
-				//Pencil
-				ArrayList<Pencil> pencil = this.model.getPencil();
-				for(Pencil p: pencil){
-					int x = p.getStart().getX();
-					int y = p.getStart().getY();
-					int x1 = p.getEnd().getX();
-					int y1 = p.getEnd().getY();
-					this.gc.setColor(p.getColor());
-					this.gc.drawLine(x, y, x1, y1);
-				}
+				Pencil pencil = this.model.getPencil();
+
+				this.gc.setColor(pencil.getColor());
+				this.gc.drawLine(pencil.getStart().getX(), pencil.getStart().getY(), pencil.getEnd().getX(), pencil.getEnd().getY());
 				
 				break;
 		}
@@ -174,6 +143,7 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 	public void setdrawColor(Color string) {
 		this.color = string;
 	}
+	
 	public void setstyle(String sty) {
 		if (sty == "outline") {this.style = "outline";}
 		if (sty == "fill") {this.style = "fill";}
@@ -192,8 +162,6 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 	public void setMode(String mode){
 		this.mode = mode;
 	}
-		// MouseMotionListener below
-
 
 	public void mouseDragged(MouseEvent e) {
 		if(this.mode=="Squiggle"){
