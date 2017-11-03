@@ -128,10 +128,9 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 				
 				break;
 			case "Square":
-				int length = Math.abs(this.square.getStart().getX()-e.getX());
-				this.square.setLength(length);
+				this.square.setCurrentPoint(point);
 				this.model.addShape(this.square);
-				
+						
 				break;
 			case "Line":
 				this.line.setEnd(point);
@@ -165,7 +164,7 @@ class PaintPanel extends JPanel implements Observer, MouseMotionListener, MouseL
 				
 				break;
 			case "Square":
-				this.square = new Square(point, this.color, 0, this.style);
+				this.square = new Square(point, this.color, this.style);
 				
 				break;
 			case "Line":
